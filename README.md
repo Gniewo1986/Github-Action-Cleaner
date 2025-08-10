@@ -6,30 +6,31 @@
 [![Forks][forks-shield]][forks-url]
 [![Stargazers][stars-shield]][stars-url]
 [![Issues][issues-shield]][issues-url]
-[![MIT License][license-shield]][license-url]
+[![project_license][license-shield]][license-url]
 
 <br />
 <div align="center">
-  <a href="https://github.com/LoveDoLove/github-action-cleaner">
+  <a href="https://github.com/LoveDoLove/Github-Action-Cleaner">
     <img src="images/logo.png" alt="Logo" width="80" height="80">
   </a>
 
 <h3 align="center">GitHub Action Cleaner</h3>
 
   <p align="center">
-    Automated workflows to clean up workflow runs in your GitHub repository.
+    Effortlessly clean up workflow runs in your GitHub repository with ready-to-use GitHub Actions.
     <br />
-    <a href="https://github.com/LoveDoLove/github-action-cleaner"><strong>Explore the docs »</strong></a>
+    <a href="https://github.com/LoveDoLove/Github-Action-Cleaner"><strong>Explore the docs »</strong></a>
     <br />
     <br />
-    <a href="https://github.com/LoveDoLove/github-action-cleaner">View Demo</a>
+    <a href="https://github.com/LoveDoLove/Github-Action-Cleaner">View Demo</a>
     &middot;
-    <a href="https://github.com/LoveDoLove/github-action-cleaner/issues/new?labels=bug&template=bug-report---.md">Report Bug</a>
+    <a href="https://github.com/LoveDoLove/Github-Action-Cleaner/issues/new?labels=bug&template=bug-report---.md">Report Bug</a>
     &middot;
-    <a href="https://github.com/LoveDoLove/github-action-cleaner/issues/new?labels=enhancement&template=feature-request---.md">Request Feature</a>
+    <a href="https://github.com/LoveDoLove/Github-Action-Cleaner/issues/new?labels=enhancement&template=feature-request---.md">Request Feature</a>
   </p>
 </div>
 
+<!-- TABLE OF CONTENTS -->
 <details>
   <summary>Table of Contents</summary>
   <ol>
@@ -47,7 +48,6 @@
       </ul>
     </li>
     <li><a href="#usage">Usage</a></li>
-    <li><a href="#roadmap">Roadmap</a></li>
     <li><a href="#contributing">Contributing</a></li>
     <li><a href="#license">License</a></li>
     <li><a href="#contact">Contact</a></li>
@@ -55,68 +55,61 @@
   </ol>
 </details>
 
+<!-- ABOUT THE PROJECT -->
+
 ## About The Project
 
-GitHub Action Cleaner provides reusable GitHub Actions workflows to help you keep your repository clean by deleting old or failed workflow runs. This is especially useful for repositories with frequent CI/CD runs, helping you save storage and maintain a tidy Actions history.
+**GitHub Action Cleaner** helps you automatically delete old or failed workflow runs from your repository using simple, ready-to-use GitHub Actions workflows.  
+No manual script setup or local execution is required—just copy the workflow YAML file to your repo and run it from the Actions tab.
+
+**Features:**
+
+- Delete all workflow runs except the current one.
+- Delete up to 100 most recent failed workflow runs.
+- No local setup or dependencies required.
+- Secure: uses GitHub Actions tokens.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ### Built With
 
+- [Python](https://www.python.org/)
 - [GitHub Actions](https://docs.github.com/en/actions)
-- [actions/github-script](https://github.com/actions/github-script)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+<!-- GETTING STARTED -->
 
 ## Getting Started
 
-To use these workflows in your own repository, follow the steps below.
-
 ### Prerequisites
 
-- A GitHub repository where you have admin or workflow permissions.
+- A GitHub repository with Actions enabled.
+- Repository admin or write access.
 
 ### Installation
 
-1. Copy the desired workflow YAML file(s) from the `workflows/` directory into your repository's `.github/workflows/` directory.
-2. Optionally, update the workflow name or schedule as needed.
+1. Download one of the workflow files from this repository:
+   - [`cleanup-all-runs.yml`](.github/workflows/cleanup-all-runs.yml): Deletes all workflow runs except the current one.
+   - [`cleanup-failed-runs.yml`](.github/workflows/cleanup-failed-runs.yml): Deletes up to 100 most recent failed workflow runs.
+2. Copy the file into your own repository at `.github/workflows/`.
+3. Commit and push the changes.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+<!-- USAGE EXAMPLES -->
 
 ## Usage
 
-### Delete All Workflow Runs
+1. Go to your repository's **Actions** tab.
+2. Select the workflow you added (e.g., "Cleanup All Workflow Runs" or "Cleanup Failed Workflow Runs").
+3. Click **Run workflow** to trigger the cleanup.
 
-This workflow deletes all workflow runs in the repository except the current run.  
-To trigger manually:
-
-- Go to the "Actions" tab in your repository.
-- Select "Delete All Workflow Runs".
-- Click "Run workflow".
-
-### Delete Failed Workflow Runs
-
-This workflow deletes only failed workflow runs (up to the 100 most recent completed runs).  
-To trigger manually:
-
-- Go to the "Actions" tab in your repository.
-- Select "Delete Failed Workflow Runs".
-- Click "Run workflow".
-
-_Ensure you have appropriate permissions, as these workflows require `actions: write` permission._
+The workflow will automatically download and execute the latest cleanup script for you.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-## Roadmap
-
-- [x] Delete all workflow runs
-- [x] Delete failed workflow runs
-- [ ] Add scheduled cleanup support
-- [ ] Add configuration for run retention
-
-See the [open issues](https://github.com/LoveDoLove/github-action-cleaner/issues) for a full list of proposed features (and known issues).
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+<!-- CONTRIBUTING -->
 
 ## Contributing
 
@@ -135,9 +128,11 @@ Don't forget to give the project a star! Thanks again!
 
 ### Top contributors:
 
-<a href="https://github.com/LoveDoLove/github-action-cleaner/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=LoveDoLove/github-action-cleaner" alt="contrib.rocks image" />
+<a href="https://github.com/LoveDoLove/Github-Action-Cleaner/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=LoveDoLove/Github-Action-Cleaner" alt="contrib.rocks image" />
 </a>
+
+<!-- LICENSE -->
 
 ## License
 
@@ -145,34 +140,36 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
+<!-- CONTACT -->
+
 ## Contact
 
-Your Name - [@twitter_handle](https://twitter.com/twitter_handle) - email@email_client.com
-
-Project Link: [https://github.com/LoveDoLove/github-action-cleaner](https://github.com/LoveDoLove/github-action-cleaner)
+Project Link: [https://github.com/LoveDoLove/Github-Action-Cleaner](https://github.com/LoveDoLove/Github-Action-Cleaner)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
+<!-- ACKNOWLEDGMENTS -->
+
 ## Acknowledgments
 
-- [actions/github-script](https://github.com/actions/github-script)
+- [Best-README-Template](https://github.com/othneildrew/Best-README-Template)
 - [GitHub Actions Documentation](https://docs.github.com/en/actions)
-- [Best README Template](https://github.com/othneildrew/Best-README-Template)
+- [Requests Library](https://docs.python-requests.org/)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 <!-- MARKDOWN LINKS & IMAGES -->
 
-[contributors-shield]: https://img.shields.io/github/contributors/LoveDoLove/github-action-cleaner.svg?style=for-the-badge
-[contributors-url]: https://github.com/LoveDoLove/github-action-cleaner/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/LoveDoLove/github-action-cleaner.svg?style=for-the-badge
-[forks-url]: https://github.com/LoveDoLove/github-action-cleaner/network/members
-[stars-shield]: https://img.shields.io/github/stars/LoveDoLove/github-action-cleaner.svg?style=for-the-badge
-[stars-url]: https://github.com/LoveDoLove/github-action-cleaner/stargazers
-[issues-shield]: https://img.shields.io/github/issues/LoveDoLove/github-action-cleaner.svg?style=for-the-badge
-[issues-url]: https://github.com/LoveDoLove/github-action-cleaner/issues
-[license-shield]: https://img.shields.io/github/license/LoveDoLove/github-action-cleaner.svg?style=for-the-badge
-[license-url]: https://github.com/LoveDoLove/github-action-cleaner/blob/master/LICENSE
+[contributors-shield]: https://img.shields.io/github/contributors/LoveDoLove/Github-Action-Cleaner.svg?style=for-the-badge
+[contributors-url]: https://github.com/LoveDoLove/Github-Action-Cleaner/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/LoveDoLove/Github-Action-Cleaner.svg?style=for-the-badge
+[forks-url]: https://github.com/LoveDoLove/Github-Action-Cleaner/network/members
+[stars-shield]: https://img.shields.io/github/stars/LoveDoLove/Github-Action-Cleaner.svg?style=for-the-badge
+[stars-url]: https://github.com/LoveDoLove/Github-Action-Cleaner/stargazers
+[issues-shield]: https://img.shields.io/github/issues/LoveDoLove/Github-Action-Cleaner.svg?style=for-the-badge
+[issues-url]: https://github.com/LoveDoLove/Github-Action-Cleaner/issues
+[license-shield]: https://img.shields.io/github/license/LoveDoLove/Github-Action-Cleaner.svg?style=for-the-badge
+[license-url]: https://github.com/LoveDoLove/Github-Action-Cleaner/blob/main/LICENSE
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/in/linkedin_username
-[product-screenshot]: images/logo.png
+[product-screenshot]: images/screenshot.png
